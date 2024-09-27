@@ -79,7 +79,7 @@ primary_expression
 	}
     | FLOAT_CONSTANT
 	| STRING_LITERAL
-	| '(' expression ')'
+	| '(' expression ')' {$$ = $2;}
 	;
 
 postfix_expression

@@ -21,6 +21,7 @@
   int          number_int;
   double       number_float;
   std::string  *string;
+  std::wstring *wstring;
   yytokentype  token;
 }
 
@@ -120,6 +121,10 @@ primary_expression
 	: INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}
+	| FLOAT_CONSTANT
+	| STRING_LITERAL
+	| '(' expression ')' {$$ = $2;}
+
 	;
 
 postfix_expression
@@ -140,10 +145,16 @@ cast_expression
 
 multiplicative_expression
 	: cast_expression
+	| multiplicative_expression '*' cast_expression {$$ = new MulOperator($1, $3);}
+	| multiplicative_expression '/' cast_expression {$$ = new DivOperator($1, $3);}
+	| multiplicative_expression '%' cast_expression
 	;
+
 
 additive_expression
 	: multiplicative_expression
+	| additive_expression '+' multiplicative_expression {$$ = new AddOperator($1, $3);}
+	| additive_expression '-' multiplicative_expression {$$ = new SubOperator($1, $3);}
 	;
 
 shift_expression

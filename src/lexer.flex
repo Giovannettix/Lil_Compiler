@@ -6,7 +6,8 @@
   // Avoid error "error: `fileno' was not declared in this scope"
   extern "C" int fileno(FILE *stream);
 
-  #include "parser.tab.hpp"
+  #include "parser.tab.hpp" //uncomment this later
+
 %}
 
 D	  [0-9]
@@ -63,7 +64,18 @@ L?'(\\.|[^\\'])+'	{yylval.number_int = (int)strtol(yytext, NULL, 0); return(INT_
 {D}*"."{D}+({E})?{FS}?	{yylval.number_float = strtod(yytext, NULL); return(FLOAT_CONSTANT);}
 {D}+"."{D}*({E})?{FS}?	{yylval.number_float = strtod(yytext, NULL); return(FLOAT_CONSTANT);}
 
-L?\"(\\.|[^\\"])*\"	{/* TODO process string literal */; return(STRING_LITERAL);}
+L?\"(\\.|[^\\"])*\"	{ //this will have to deal with characters such as %f\n, etc.!
+
+  if(yytext[0] == 'L'){
+    std::string str(yytext + 2, yytext + yyleng - 1);
+    yylval.string = new std::string(str);
+  }
+  else{
+    std::string str(yytext + 1, yytext + yyleng - 1);
+    yylval.string = new std::string(str);
+  }
+
+  return(STRING_LITERAL);}
 
 "..."      {return(ELLIPSIS);}
 ">>="			 {return(RIGHT_ASSIGN);}

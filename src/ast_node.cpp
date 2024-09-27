@@ -13,6 +13,13 @@ void NodeList::PushBack(Node *item)
     nodes_.push_back(item);
 }
 
+void NodeList::PushBackList(NodeList *items)
+{
+    for (auto it : items->nodes_){
+        nodes_.push_back(it);
+    }
+}
+
 void NodeList::EmitRISC(std::ostream &stream, Context &context) const
 {
     for (auto node : nodes_)
